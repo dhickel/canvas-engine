@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>CheerpJ Canvas Hello</title>
+        <style>
+            body { 
+                margin: 0; 
+                background-color: #f0f0f0; 
+                font-family: Arial, sans-serif; 
+            }
+            #status { 
+                padding: 10px; 
+                background-color: #333; 
+                color: white; 
+                font-size: 12px; 
+            }
+        </style>
+    </head>
+    <body>
+        <div id="status">Loading CheerpJ...</div>
+        
+        <script src="https://cjrtnc.leaningtech.com/4.2/loader.js"></script>
+        <script>
+            const statusDiv = document.getElementById('status');
+            
+            (async () => {
+                try {
+                    statusDiv.textContent = 'Initializing CheerpJ runtime...';
+                    
+                    // Use simpler initialization with Java 17 support
+                    await cheerpjInit({
+                        version: 17
+                    });
+                    
+                    statusDiv.textContent = 'CheerpJ initialized, waiting for display system...';
+
+                    cheerpjCreateDisplay(1920, 1080);
+                    
+                    // Longer delay for display system initialization
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    
+                    statusDiv.textContent = 'Starting HelloCanvas application...';
+                    
+                    // Run the main class
+                    await cheerpjRunMain("HelloCanvas", "/app/target/swing-engine-1.0-SNAPSHOT.jarhello.jar");
+                    
+                    statusDiv.textContent = 'Application started successfully!';
+                    
+                } catch (error) {
+                    console.error("CheerpJ initialization failed:", error);
+                    statusDiv.innerHTML = `<span style="color: red;">Error: ${error.message || error}</span>`;
+                    document.body.innerHTML += `
+                        <div style="padding: 20px;">
+                            <h1>Error loading application</h1>
+                            <p><strong>Error details:</strong> ${error.message || error}</p>
+                            <p><strong>Possible solutions:</strong></p>
+                            <ul>
+                                <li>Make sure hello.jar is accessible at /app/hello.jar</li>
+                                <li>Try refreshing the page</li>
+                                <li>Check browser console for additional errors</li>
+                            </ul>
+                        </div>
+                    `;
+                }
+            })();
+        </script>
+    </body>
+</html>
